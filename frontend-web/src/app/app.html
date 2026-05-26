@@ -1,0 +1,232 @@
+@if (!authService.isAuthenticated()) {
+  <!-- LANDING PAGE (Unauthenticated State) -->
+  <div class="flex flex-col items-center justify-center min-h-screen bg-gradient-to-tr from-slate-950 via-slate-900 to-indigo-950 text-slate-100 p-4">
+    <div class="max-w-md w-full backdrop-blur-lg bg-white/5 border border-white/10 p-8 rounded-3xl shadow-2xl text-center space-y-6 transform hover:scale-[1.01] transition-all duration-300">
+      <div class="flex justify-center">
+        <div class="p-4 bg-indigo-500/10 rounded-2xl border border-indigo-500/20 text-indigo-400">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-12 h-12">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
+          </svg>
+        </div>
+      </div>
+
+      <div class="space-y-2">
+        <h1 class="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">
+          ScribeAI Portal
+        </h1>
+        <p class="text-slate-400 text-sm">
+          Plataforma Segura de Video RAG e Inteligencia Artificial
+        </p>
+      </div>
+
+      <div class="border-t border-white/5 my-4"></div>
+
+      <div class="space-y-4">
+        <p class="text-slate-300 text-sm px-4">
+          Para acceder a las funcionalidades de análisis de video, por favor inicia sesión utilizando nuestro Identity Provider corporativo (Keycloak).
+        </p>
+        <button (click)="login()" class="btn btn-primary w-full gap-2 shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/40 transform hover:-translate-y-0.5 active:translate-y-0 transition-all duration-150">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.25 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" />
+          </svg>
+          Iniciar Sesión con Keycloak
+        </button>
+      </div>
+
+      <div class="text-xs text-slate-500 pt-2">
+        Protegido por OAuth2 + OpenID Connect (OIDC) & PKCE S256
+      </div>
+    </div>
+  </div>
+} @else {
+  <!-- DASHBOARD PAGE (Authenticated State) -->
+  <div class="min-h-screen bg-slate-950 text-slate-100 flex flex-col">
+    <!-- Navbar -->
+    <header class="navbar bg-slate-900 border-b border-white/5 px-6 py-4 justify-between items-center shadow-lg">
+      <div class="flex items-center gap-3">
+        <div class="p-2 bg-indigo-500/10 rounded-xl border border-indigo-500/20 text-indigo-400">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="m15.75 10.5 4.72-4.72a.75.75 0 0 1 1.28.53v11.38a.75.75 0 0 1-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25h-9A2.25 2.25 0 0 0 2.25 7.5v9a2.25 2.25 0 0 0 2.25 2.25Z" />
+          </svg>
+        </div>
+        <span class="text-xl font-bold tracking-tight bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">
+          ScribeAI
+        </span>
+      </div>
+
+      <div class="flex items-center gap-4">
+        <!-- User Badge -->
+        <div class="flex items-center gap-3 px-4 py-2 rounded-2xl bg-white/5 border border-white/10">
+          <div class="avatar placeholder">
+            <div class="bg-indigo-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm uppercase">
+              {{ authService.username()?.substring(0, 2) }}
+            </div>
+          </div>
+          <div class="flex flex-col text-left">
+            <span class="text-xs text-slate-400">Usuario Activo</span>
+            <span class="text-sm font-semibold text-slate-200">{{ authService.username() }}</span>
+          </div>
+        </div>
+
+        <!-- Logout Button -->
+        <button (click)="logout()" class="btn btn-error btn-outline btn-sm rounded-xl gap-1">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.25 21h6a2.25 2.25 0 0 0 2.25-2.25V15m-3-3H21m0 0-3-3m3 3-3 3" />
+          </svg>
+          Salir
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-1 p-6 md:p-10 max-w-7xl mx-auto w-full space-y-8">
+      <!-- Status Stats Banner -->
+      <section class="stats shadow bg-slate-900 border border-white/5 w-full grid grid-cols-1 md:grid-cols-3">
+        <div class="stat p-6 border-b md:border-b-0 md:border-r border-white/5">
+          <div class="stat-figure text-success">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-8 h-8 stroke-current">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+          </div>
+          <div class="stat-title text-slate-400">Estado de Conexión</div>
+          <div class="stat-value text-success text-2xl mt-1">Autenticado</div>
+          <div class="stat-desc text-slate-500 mt-1">Conectado vía Keycloak IdP</div>
+        </div>
+
+        <div class="stat p-6 border-b md:border-b-0 md:border-r border-white/5">
+          <div class="stat-figure text-indigo-400">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="inline-block w-8 h-8">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+            </svg>
+          </div>
+          <div class="stat-title text-slate-400">Identificador</div>
+          <div class="stat-value text-indigo-400 text-2xl mt-1">{{ authService.username() }}</div>
+          <div class="stat-desc text-slate-500 mt-1">ID Token validado correctamente</div>
+        </div>
+
+        <div class="stat p-6">
+          <div class="stat-figure text-cyan-400">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="inline-block w-8 h-8">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z" />
+            </svg>
+          </div>
+          <div class="stat-title text-slate-400">Roles Asignados</div>
+          <div class="stat-value text-cyan-400 text-2xl mt-1">{{ authService.getUserRoles().length }}</div>
+          <div class="stat-desc text-slate-500 mt-1">Extraídos de los Claims del Realm</div>
+        </div>
+      </section>
+
+      <!-- Dashboard Cards Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        
+        <!-- Left Side: User Profile & Interceptor Test -->
+        <div class="space-y-8">
+          <!-- Profile Card -->
+          <div class="card bg-slate-900 border border-white/5 p-6 rounded-2xl shadow-xl">
+            <h2 class="text-lg font-bold text-slate-200 mb-4 flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 text-indigo-400">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Zm6-10.125a1.875 1.875 0 1 1-3.75 0 1.875 1.875 0 0 1 3.75 0Zm1.294 6.336a6.721 6.721 0 0 1-3.17.789 6.721 6.721 0 0 1-3.168-.789 3.376 3.376 0 0 1 6.338 0Z" />
+              </svg>
+              Perfil y Atributos de Keycloak
+            </h2>
+            
+            <div class="space-y-4">
+              <div>
+                <span class="text-xs text-slate-500 uppercase block mb-1">Nombre de usuario</span>
+                <span class="text-sm font-medium text-slate-300">{{ authService.username() }}</span>
+              </div>
+              
+              <div>
+                <span class="text-xs text-slate-500 uppercase block mb-2">Roles detectados en Token</span>
+                <div class="flex flex-wrap gap-2">
+                  @for (role of authService.getUserRoles(); track role) {
+                    <span class="badge bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 px-3 py-2.5 rounded-lg text-xs font-semibold">
+                      {{ role }}
+                    </span>
+                  } @empty {
+                    <span class="text-sm text-slate-500 italic">No se encontraron roles asignados</span>
+                  }
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Interceptor Test Card -->
+          <div class="card bg-slate-900 border border-white/5 p-6 rounded-2xl shadow-xl">
+            <h2 class="text-lg font-bold text-slate-200 mb-2 flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 text-success">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 21 3-16.5m0 0L21 12M3 4.5 21 12m0 0L16.5 21" />
+              </svg>
+              Prueba del Http Interceptor
+            </h2>
+            <p class="text-sm text-slate-400 mb-4">
+              Realiza una petición HTTP simulada a `/api/secure-data` para verificar si el interceptor inyecta el encabezado `Authorization: Bearer [JWT]`.
+            </p>
+
+            <div class="space-y-4">
+              <button 
+                (click)="testApiCall()" 
+                [disabled]="isCallingApi()"
+                class="btn btn-outline btn-success w-full gap-2">
+                @if (isCallingApi()) {
+                  <span class="loading loading-spinner loading-sm"></span>
+                  Enviando Petición...
+                } @else {
+                  Probar Interceptor
+                }
+              </button>
+
+              @if (apiResult()) {
+                <div class="p-4 rounded-xl bg-success/10 border border-success/20 text-success text-sm space-y-1">
+                  <span class="font-bold block">Respuesta Exitosa:</span>
+                  <p class="font-mono text-xs break-all">{{ apiResult() }}</p>
+                </div>
+              }
+
+              @if (apiError()) {
+                <div class="p-4 rounded-xl bg-info/10 border border-info/20 text-indigo-300 text-sm space-y-1">
+                  <span class="font-bold block text-info flex items-center gap-1.5">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="m11.25 11.25.041-.02a.75.75 0 1 1 1.085 1.085l-.04.02-.041.02a.75.75 0 0 1-1.085-1.085l.04-.02Zm0 6h.018v.018h-.018V17.25Zm0-12h.018v.018h-.018V5.25Z" />
+                    </svg>
+                    Petición Enviada e Interceptada
+                  </span>
+                  <p class="text-slate-300 text-xs">{{ apiError() }}</p>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Side: Token Inspector -->
+        <div class="card bg-slate-900 border border-white/5 p-6 rounded-2xl shadow-xl flex flex-col">
+          <h2 class="text-lg font-bold text-slate-200 mb-2 flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 text-cyan-400">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 5.25a3 3 0 0 1 3 3m3 0a6 6 0 0 1-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1 1 21.75 8.25Z" />
+            </svg>
+            Acceso al Token JWT
+          </h2>
+          <p class="text-sm text-slate-400 mb-4">
+            Este es el token Bearer firmado por Keycloak que se inyecta en cada llamada a las APIs. Puedes inspeccionarlo o decodificarlo en jwt.io.
+          </p>
+
+          <div class="flex-1 flex flex-col space-y-4">
+            <div class="relative flex-1">
+              <textarea 
+                readonly 
+                class="w-full h-[280px] p-4 bg-slate-950 border border-white/5 rounded-xl text-xs font-mono text-indigo-300 break-all resize-none focus:outline-none focus:border-indigo-500/20"
+                placeholder="Token no disponible">{{ authService.getToken() }}</textarea>
+            </div>
+            
+            <button 
+              (click)="authService.refreshToken(10)" 
+              class="btn btn-outline btn-sm rounded-xl">
+              Forzar Refresco de Token
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+}

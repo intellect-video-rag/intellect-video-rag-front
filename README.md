@@ -44,12 +44,89 @@ The platform is designed following a **Microservices and Event-Driven Architectu
 
 ## 🔧 Getting Started (Local Development)
 
-*(Note: Docker Compose setup documentation coming soon)*
+To run the application locally, follow these steps to spin up the Keycloak IAM infrastructure, configure it, and run the Angular frontend.
 
-```text
-git clone [https://github.com/YOUR_USERNAME/scribe-ai-pipeline.git](https://github.com/YOUR_USERNAME/scribe-ai-pipeline.git)
-cd scribe-ai-pipeline
+### 📋 Prerequisites
+- **Docker** and **Docker Compose**
+- **Node.js** (v20+ recommended) and **npm**
+- **Terraform** (optional, for automated Keycloak configuration)
 
+---
+
+### Step 1: Start the Identity & Database Infrastructure
+Spin up the local PostgreSQL database, clustered Keycloak instances, and the Nginx load balancer:
+```bash
+docker compose up -d
+```
+
+#### 🔍 Verifying the Setup
+You can check if the services started correctly by looking at the logs. They should show that:
+1. `keycloak-db` is ready to accept connections.
+2. `keycloak-1` and `keycloak-2` started successfully and joined the Infinispan cluster.
+3. `keycloak-lb` (Nginx load balancer) is listening on port `8080`.
+
+---
+
+### Step 2: Access & Configure Keycloak IAM
+The load balancer exposes Keycloak on port `8080`.
+
+- **Admin UI Console**: [http://localhost:8080/admin/](http://localhost:8080/admin/) (or simply [http://localhost:8080](http://localhost:8080))
+- **Default Credentials**:
+  - **Username**: `admin`
+  - **Password**: `admin`
+
+Choose **one** of the options below to configure the `scribeai` realm and `scribeai-frontend` client:
+
+#### Option A: Automated Configuration via Terraform (Recommended)
+We provide a Terraform configuration to automatically set up the realm and client:
+```bash
+cd terraform
+terraform init
+terraform apply -auto-approve
+cd ..
+```
+
+#### Option B: Manual Configuration via Admin UI
+If you prefer configuring it manually:
+1. Log in to the Keycloak Admin Console.
+2. In the top-left dropdown, click **Create Realm**. Enter `scribeai` as the realm name and click **Create**.
+3. Go to the **Clients** section and click **Create client**.
+   - **Client type**: `OpenID Connect`
+   - **Client ID**: `scribeai-frontend`
+   - Click **Next**.
+4. In **Capability config**:
+   - Ensure **Client authentication** is turned **Off** (Public client).
+   - Ensure **Standard flow** (Authorization Code Flow) is **Checked**.
+   - Click **Next**.
+5. In **Login settings**:
+   - **Root URL**: `http://localhost:4200`
+   - **Valid redirect URIs**: `http://localhost:4200/*`
+   - **Web origins**: `http://localhost:4200`
+   - Click **Save**.
+6. Create a test user:
+   - Go to **Users** -> **Add user**. Enter a username (e.g., `testuser`) and save.
+   - Go to the **Credentials** tab of the user, click **Set password**, enter a password, turn **Temporary** **Off**, and click **Save**.
+
+---
+
+### Step 3: Run the Angular Application
+Once Keycloak is configured, you can run the Angular development server:
+
+```bash
+# Navigate to the frontend directory
+cd frontend-web
+
+# Install dependencies
+npm install
+
+# Start the local development server
+npm start
+```
+
+Open [http://localhost:4200](http://localhost:4200) in your browser.
+
+- To test the Keycloak login integration, click the **Login** button. You will be redirected to the Keycloak login screen at `http://localhost:8080`.
+- Enter the credentials of the user you created to log in. You will be redirected back to the Angular app and see your username displayed!
 
 
 ---
